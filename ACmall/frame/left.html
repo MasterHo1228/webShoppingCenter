@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>导航</title>
+    <script type="text/javascript" src="../js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="../js/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.theme.min.css">
+    <style type="text/css">
+        #SelectList{
+            font-size: 15px;
+            font-weight: 300;
+        }
+        #SelectList div{
+            padding: 0 !important;
+        }
+        #SelectList ul{
+            padding-left: 35px !important;
+        }
+        #SelectList ul li{
+            list-style: none;
+            margin: 3px 0;
+        }
+        .adminOption,.rootAcc{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="SelectList">
+    <h3>商品管理</h3>
+    <div>
+        <ul>
+            <li><a href="../content/addgood.php" target="right">增加商品</a></li>
+            <li><a href="../content/goodslist.php" target="right">商品管理</a></li>
+        </ul>
+    </div>
+    <h3>会员管理</h3>
+    <div>
+        <ul>
+            <li class="adminOption"><a href="../content/userlist.php" target="right">会员账号管理</a></li>
+            <li><a href="../content/replyslist.php" target="right">会员评价管理</a></li>
+        </ul>
+    </div>
+    <h3>订单管理</h3>
+    <div>
+        <ul>
+            <li><a href="../content/orderslist.php" target="right">订单管理</a></li>
+        </ul>
+    </div>
+    <h3>信息管理</h3>
+    <div>
+        <ul>
+            <li><a href="../content/addNews.html" target="right">发布公告</a></li>
+            <li><a href="../content/newslist.php" target="right">管理公告</a></li>
+        </ul>
+    </div>
+    <h3>账户管理</h3>
+    <div>
+        <ul>
+            <li class="adminOption rootAcc"><a href="../content/adminlist.php" target="right">管理员账号管理</a></li>
+            <li class="rootAcc"><a href="../content/adminlog.php" target="right">管理员日志管理</a></li>
+            <li class="adminOption"><a href="../content/userlog.php" target="right">商城店铺账号日志</a></li>
+            <li><a href="../content/showadmininfo.php" target="right">账号信息</a></li>
+        </ul>
+    </div>
+    <h3>退出系统</h3>
+    <div>
+        <ul>
+            <li><a href="../backend/logout.php">退出</a></li>
+        </ul>
+    </div>
+</div>
+</body>
+<script language="JavaScript">
+    var Adminlogin=false;
+    $(function () {
+        $("#SelectList").accordion({heightStyle: "content"});
+        $.ajax({url:"../backend/loginstatus.php",success:function (status) {
+            if (status=="root"){
+                Adminlogin=true;
+                $(".adminOption").show();
+                $(".rootAcc").show();
+            }
+            else if (status=="Adminlogin"){
+                Adminlogin=true;
+                $(".adminOption").show();
+            }
+        }})
+    })
+</script>
+</html>

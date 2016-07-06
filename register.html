@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>账户注册 -- AC商城</title>
+    <script language="javascript" type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+    <script language="javascript" type="text/javascript" src="js/regCheck.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/font.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+</head>
+
+<body>
+<div id="container">
+    <div class="login_head">
+        <div id="img_logo"><a href="index.html"><img src="images/logo.png"/></a></div>
+        <p class="p1">用户注册</p>
+    </div>
+    <div id="reg_middle">
+        <form id="formReg" method="post" action="backend/register.php">
+            <table border="0" width="500">
+                <tr>
+                    <td colspan="2"><p class="STYLE1">请用户认真填写注册信息！</p></td>
+                </tr>
+                <tr>
+                    <td width="24%">用户名：</td>
+                    <td width="76%"><input type="text" name="username" id="uName" minlength="6" maxlength="15"/>
+                        <p id="pn" class="p2">用户名不能为空！</p>
+                    </td>
+                </tr>
+                <td>密 &nbsp; 码：</td>
+                <td><input name="password" type="password" id="ps" minlength="8" maxlength="25"/>
+                    <p id="pm" class="p2">密码不能为空！</p>
+                </td>
+                </tr>
+                <tr>
+                    <td>密码验证：</td>
+                    <td><input name="password1" type="password" id="ps1" minlength="8" maxlength="25"/>
+                        <p id="pm1" class="p2">请与密码填写一致！</p></td>
+                </tr>
+                <tr>
+                    <td>姓 &nbsp; 别：</td>
+                    <td><label>
+                        <input name="sex" type="radio" value="Male" checked="checked"/>
+                        男
+                        <input type="radio" name="sex" value="Female"/>
+                        女 </label></td>
+                </tr>
+                <tr>
+                    <td>出生日期：</td>
+                    <td><input name="dateofbirth" type="date" class="input" id="dateofbirth"/></td>
+                </tr>
+                <tr>
+                    <td>E-mail：</td>
+                    <td><input name="email" type="email" class="input" id="email" maxlength="30"/>
+                        <p id="emW" class="p2">E-Mail格式不正确！</p></td>
+                </tr>
+
+            </table>
+            <div id="label1">
+                <input name="btnRegister" id="btnRegister" type="submit" value="注册"/>
+                <input name="btnReset" id="btnReset" type="reset" value="重写"/>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

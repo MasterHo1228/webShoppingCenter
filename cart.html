@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>购物车 -- AC商城</title>
+    <link rel="stylesheet" type="text/css" href="css/font.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <script language="JavaScript" src="js/jquery-1.12.4.min.js"></script>
+    <script language="JavaScript">
+        function confirmDel(gID) {
+            if (confirm("确定要删除商品吗？")) {
+                location.href = "backend/dropcartgoods.php?gID=" + gID;
+            }
+        }
+        function confirmClear() {
+            if (confirm("确定要清空购物车吗？")) {
+                location.href = "backend/dropcart.php";
+            }
+        }
+        $(function () {
+            var orderID;
+            $.ajax({
+                url: "backend/loginstatus.php", success: function (status) {
+                    if (status == "login") {
+                        $.ajax({
+                            url: "backend/showusrname.php", success: function (data) {
+                                $("#usrName").append(data);
+                                $("#HeaderUsrName").show();
+                            }
+                        })
+                    } else {
+                        alert("请先登录网站账号！！");
+                        location.href = "index.html";
+                    }
+                }
+            });
+            $.ajax({
+                url: "backend/showpayorder.php", dataType: 'xml', success: function (data) {
+                    $("#tbOrderGoodsList").empty();
+                    $(data).find("order").each(function () {
+                        $("#emptyCart").hide();
+                        orderID = $(this).find("orderID").text();
+                        var scoreName = $(this).find("scoreName").text();
+                        $("#storeName").append(scoreName);
+                        $(data).find("goods").each(function () {
+                            var GoodsID = $(this).find("GoodsID").text();
+                            var gName = $(this).find("gName").text();
+                            var gPrice = $(this).find("gPrice").text();
+                            var GoodsCount = $(this).find("GoodsCount").text();
+                            var sumPrice = $(this).find("sumPrice").text();
+
+                            var cartRow =
+                                    "<tr>" +
+                                    "<td>" + GoodsID + "</td>" +
+                                    "<td>" + "<a href='goodinfo.html?gID="+GoodsID+"' target='_blank'>"+gName+"</a>" + "</td>" +
+                                    "<td>￥" + gPrice + "</td>" +
+                                    "<td>" + GoodsCount + "</td>" +
+                                    "<td>￥" + sumPrice + "</td>" +
+                                    "<td>" + "<a href='#' onclick='confirmDel(" + GoodsID + ")'>" + "删除" + "</a>" + "</td>" +
+                                    "</tr>";
+                            $("#tbOrderGoodsList").append(cartRow);
+                        });
+                        var OrderSumPrice = $(this).find("OrderSumPrice").text();
+                        $("#sumPrice").append(OrderSumPrice);
+                        $("#cartMain").show();
+                    });
+                }
+            });
+            $("#btnToPayOrder").click(function () {
+                var orderPerson = $("#txtOrderPerson").val();
+                var orderAddress = $("#txtOrderAddress").val();
+                var orderTel = $("#txtOrderTel").val();
+
+                if (orderPerson != "" && orderAddress != "" && orderTel != "") {
+                    if (orderTel.length == 11) {
+                        $.post("backend/orderaddr.php", {
+                            orderPerson: orderPerson,
+                            orderAddress: orderAddress,
+                            orderTel: orderTel
+                        }, function (data) {
+                            if (data == "") {
+                                location.href = "payorder.html?orderID=" + orderID+"&from=cart";
+                            }
+                            else {
+                                $("#divEvent").html(data)
+                            }
+                        })
+                    }
+                    else {
+                        alert("您输入的联系电话格式不对呦~~");
+                    }
+                }
+                else {
+                    alert("收货人联系信息请填写完整！");
+                }
+            })
+        })
+    </script>
+</head>
+
+<body>
+<div id="container">
+    <div id="head">
+        <div id="img_logo"><a href="index.html"><img src="images/logo.png"/></a></div>
+        <div id="navigation">
+            <ul class="unav">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="myinfo.html">用户中心</a></li>
+            </ul>
+        </div>
+        <div id="HeaderUsrName">
+            <p id="usrName">您好，</p>
+        </div>
+    </div>
+    <div id="cartMain">
+        <div id="cartTitle"><p>购物车</p></div>
+        <div id="cartDetail">
+            <p id="storeName">店铺名称：</p>
+            <table border="1" width="600">
+                <tr>
+                    <th>商品ID</th>
+                    <th>商品名</th>
+                    <th>价格</th>
+                    <th>个数</th>
+                    <th>小计</th>
+                    <th>操作</th>
+                </tr>
+                <tbody id="tbOrderGoodsList">
+
+                </tbody>
+                <tr>
+                    <td colspan="6" id="sumPrice">总价：￥</td>
+                </tr>
+            </table>
+            <label for="txtOrderPerson">收货人：</label><input type="text" id="txtOrderPerson">
+            <label for="txtOrderAddress">收货地址：</label><input type="text" id="txtOrderAddress">
+            <label for="txtOrderTel">联系电话：</label><input type="text" id="txtOrderTel">
+            <br/>
+
+            <button id="btnToPayOrder">提交订单并付款</button>
+            <button id="btnClearCart" onclick="confirmClear()">清空购物车</button>
+        </div>
+    </div>
+    <div id="emptyCart">
+        <h1>亲，购物车里面空空如也呦~~~~！</h1>
+    </div>
+</div>
+<div id="divEvent"></div>
+</body>
+</html>

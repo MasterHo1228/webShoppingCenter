@@ -1,0 +1,125 @@
+CREATE DATABASE dbShoppingOrders CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+USE dbShoppingOrders;
+
+CREATE TABLE Orders(
+  oID BIGINT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  orderID VARCHAR(25) NOT NULL UNIQUE ,
+  oUID BIGINT UNSIGNED NOT NULL,
+  tmpOrder ENUM('0', '1') NOT NULL DEFAULT '1',
+  orderPerson VARCHAR(10),
+  orderAddress TEXT,
+  orderTel VARCHAR(11),
+  ExpressID TINYINT UNSIGNED ,
+  ExpressNum VARCHAR(25)
+);
+
+CREATE TABLE OrdersDetail(
+  orderID VARCHAR(25) NOT NULL ,
+  orderContainGoodsID BIGINT UNSIGNED NOT NULL,
+  GoodsCount INT UNSIGNED NOT NULL DEFAULT 1,
+  isPaid ENUM('true', 'false') NOT NULL DEFAULT 'false',
+  PayBy ENUM('alipay', 'wechat') ,
+  orderStatus ENUM('0','1','2','3') NOT NULL DEFAULT '1'
+);
+
+ALTER TABLE Orders ADD CONSTRAINT FKoUID FOREIGN KEY (oUID) REFERENCES dbShoppingUsers.User(uID);
+
+ALTER TABLE OrdersDetail ADD CONSTRAINT FKorderContainGoodsID FOREIGN KEY (orderContainGoodsID) REFERENCES dbShoppingGoods.Goods(gID);
+
+ALTER TABLE OrdersDetail ADD CONSTRAINT FKorderID FOREIGN KEY (orderID) REFERENCES Orders(orderID) ON DELETE CASCADE;
+
+CREATE TABLE Expresses
+(
+  eID TINYINT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  eName VARCHAR(10) NOT NULL UNIQUE ,
+  eTel VARCHAR(15)
+);
+
+INSERT INTO expresses(eName) VALUES ('顺丰速运'),('申通快递'),('圆通快递'),('中通快递'),('韵达快递'),('EMS'),('百世汇通');
+ALTER TABLE Orders ADD CONSTRAINT FKExpressID FOREIGN KEY (ExpressID) REFERENCES expresses(eID);
+
+CREATE VIEW viewCheckStore AS
+  SELECT DISTINCT
+    a.orderID,
+    b.gSalesSUID,
+    b.sUName
+  FROM ordersdetail a,dbshoppinggoods.viewshowgoodsdetail b
+  WHERE a.orderContainGoodsID=b.gID;
+
+CREATE VIEW viewOrderBriefInfo AS
+  SELECT
+    a.oID,
+    a.orderID,
+    a.oUID,
+    a.tmpOrder,
+    b.uName,
+    c.gSalesSUID,
+    c.sUName,
+    e.isPaid,
+    e.PayBy,
+    a.orderPerson,
+    a.orderAddress,
+	a.orderTel,
+    d.eName,
+    a.ExpressNum,
+    e.orderStatus
+  FROM orders a
+    LEFT JOIN OrdersDetail e ON e.orderID=a.orderID
+    LEFT JOIN expresses d ON a.ExpressID = d.eID
+    INNER JOIN dbShoppingUsers.user b,viewCheckStore c
+  WHERE a.oUID=b.uID
+  GROUP BY a.oID;
+  
+CREATE VIEW viewOrderDetail AS
+  SELECT
+    a.oID,
+    a.orderID,
+    a.oUID,
+    a.uName,
+    a.sUName,
+    a.isPaid,
+    a.PayBy,
+    a.orderStatus,
+    a.orderPerson,
+    a.orderAddress,
+    a.orderTel,
+    a.eName,
+    a.ExpressNum,
+    b.orderContainGoodsID,
+    c.gName,
+    c.gPrice,
+    b.GoodsCount,
+    (c.gPrice*b.GoodsCount) AS sumPrice
+  FROM viewOrderBriefInfo a,ordersdetail b,dbshoppinggoods.goods c
+  WHERE a.orderID=b.orderID AND b.orderContainGoodsID=c.gID;
+  
+DELIMITER ||
+CREATE TRIGGER trgAddOrder
+AFTER INSERT ON ordersdetail
+FOR EACH ROW
+  BEGIN
+    UPDATE dbshoppinggoods.goods SET gNums=gNums-new.GoodsCount 
+    WHERE new.orderContainGoodsID=dbshoppinggoods.goods.gID;
+  END||
+
+CREATE TRIGGER trgCkeckOrder
+AFTER UPDATE ON ordersdetail
+FOR EACH ROW
+  BEGIN
+  IF new.isPaid='true' THEN
+    UPDATE dbshoppinggoods.goods SET gSoldOutNum=gSoldOutNum+new.GoodsCount
+    WHERE new.orderContainGoodsID=dbshoppinggoods.goods.gID;
+  ELSEIF new.orderStatus='0' THEN
+    UPDATE dbshoppinggoods.goods SET gNums=gNums+new.GoodsCount
+    WHERE new.orderContainGoodsID=dbshoppinggoods.goods.gID;
+  END IF;
+  END||
+  
+CREATE TRIGGER trgDelOrderGood
+  AFTER DELETE ON OrdersDetail
+  FOR EACH ROW
+  BEGIN
+    UPDATE dbshoppinggoods.goods SET gNums=gNums+old.GoodsCount
+    WHERE old.orderContainGoodsID=dbshoppinggoods.goods.gID;
+  END ||

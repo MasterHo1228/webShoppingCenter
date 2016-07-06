@@ -1,0 +1,44 @@
+<!--Created by MasterHo on 2016/6/7 via IntelliJ IDEA.-->
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>发布公告</title>
+    <script type="text/javascript" charset="utf-8" src="../js/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../js/ueditor.all.min.js"> </script>
+    <style type="text/css">
+        input,select,textarea{
+            margin: 5px 0;
+            height: 22px;
+        }
+        #btnAddNews{
+            width: 125px;
+            height: 28px;
+            margin: 10px 8px;
+        }
+        #txtNewNewsTitle{
+            width: 380px;
+        }
+        #divNewsMain{
+            margin-top: 15px;
+        }
+        .NotNull{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<h1>发布公告</h1>
+    <form action="../backend/addnews.php" method="post" id="formAddNews">
+        <span class="NotNull">*</span><label for="txtNewNewsTitle">公告标题：</label><input type="text" name="NewNewsTitle" id="txtNewNewsTitle"><br/>
+        <span class="NotNull">*</span><label for="txtNewNewsMain">公告内容：</label>
+        <div id="divNewsMain">
+            <script id="txtNewNewsMain" name="NewNewsMain" type="text/plain">此处编辑撰写新闻内容。</script>
+        </div><br/>
+        <input type="submit" value="提交" id="btnAddNews">
+    </form>
+</body>
+<script type="text/javascript">
+    var editor = UE.getEditor('txtNewNewsMain');
+</script>
+</html>

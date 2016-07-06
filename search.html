@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>搜索结果 -- AC商城</title>
+    <script language="JavaScript" src="js/jquery-1.12.4.min.js"></script>
+    <script language="JavaScript" src="js/jquery-ui.min.js"></script>
+    <script language="JavaScript" src="js/pinterest_grid.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css">
+    <style type="text/css">
+        body {
+        background-color: #eee;
+        }
+        #mLeft{
+            min-width: 100% !important;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="css/font.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+</head>
+
+<body>
+<div id="head">
+    <div id="img_logo"><a href="index.html"><img src="images/logo.png"/></a></div>
+    <div id="navigation">
+        <ul class="unav">
+            <li class="usrLinks"><a href="#">用户中心</a></li>
+            <li class="usrLinks"><a href="cart.html">购物车</a></li>
+        </ul>
+    </div>
+    <div id="dLogin">
+        <ul class="uLogin">
+            <li><a href="login.html"><p class="font_red">亲，请登录</p></a></li>
+            <li><a href="register.html">注册</a></li>
+        </ul>
+    </div>
+    <div id="HeaderUsrName">
+        <p id="usrName">您好，</p>
+    </div>
+</div>
+
+<div id="top">
+    <div class="lookup">
+        <form action="" method="get">
+            <label>
+                <input id="gSearcher" name="gKey" class="txtSearch" type="text"/>
+                <input name="btnSearch" class="btnSearch" type="submit" value="搜索"/>
+            </label>
+        </form>
+    </div>
+</div>
+
+<div id="middle">
+    <div id="mLeft">
+        <section id="goods-wrapper">
+
+        </section>
+    </div>
+</div>
+
+<div class="foot">
+    <div class="foot_ul">
+        <ul class="ufot">
+            <li><a href="#">关于我们</a></li>
+            <li><a href="#">我要举报</a></li>
+            <li><a href="#">联系客服</a></li>
+        </ul>
+    </div>
+    <div class="foot_end">
+        <p class="foot_p">Copyright &copy; acmall.com</p>
+    </div>
+</div>
+</body>
+<script language="JavaScript">
+    function getUrlVars() {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for (var i = 0; i < hashes.length; i++) {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
+
+    function getUrlVar(name) {
+        return getUrlVars()[name];
+    }
+    var gKeyVal = getUrlVar('gKey');
+    var gKey = decodeURI(gKeyVal);
+
+    $(function () {
+        if (gKey != "") {
+            $("#goods-wrapper").pinterest_grid({
+                no_columns: 5,
+                padding_x: 3,
+                padding_y: 15,
+                margin_bottom: 60,
+                single_column_breakpoint: 700
+            });
+            $.ajax({
+                url: "backend/searchgoods.php", data: {gKey: gKey}, dataType: 'xml', success: function (data) {
+                    $("#goods-wrapper").empty();
+                    $(data).find("good").each(function () {
+                        var gID = $(this).find("ID").text();
+                        var gName = $(this).find("Name").text();
+                        var gPrice = $(this).find("Price").text();
+                        var gPhoto = $(this).find("PhotoPos").text();
+                        if (gPhoto == "") {
+                            gPhoto = "images/goods/default.jpg";
+                        }
+
+                        var goodsTag=
+                                "<article class='white-panel'>"+
+                                "<a href='goodinfo.html?gID="+gID+"' target='_blank'>"+
+                                "<img src='"+gPhoto+"' class='thumb'>"+
+                                "<h1>"+gName+"</h1>"+
+                                "<p>￥"+gPrice+"</p>"+
+                                "</a>"+
+                                "</article>";
+                        $("#goods-wrapper").append(goodsTag);
+                    })
+                },
+                error: function () {
+                    alert("加载失败！");
+                }
+            })
+        }
+        else {
+            alert("请输入要搜索的商品的关键字！");
+        }
+        $.ajax({
+            url: "backend/loginstatus.php", success: function (status) {
+                if (status == "login") {
+                    $("#dLogin").hide();
+                    $(".usrLinks").show();
+                    $.ajax({url:"backend/showusrname.php",success:function (data) {
+                        $("#usrName").append(data);
+                        $("#HeaderUsrName").show();
+                    }})
+                }
+            }
+        });
+        var gNames=[];
+        $.ajax({url:"backend/searcher.php",dataType:'xml',success:parseXml,complete:searcherInit,failure:function () {
+            alert("XML File could not be found");
+        }});
+        function parseXml(xml) {
+            //find every query value
+            $(xml).find("name").each(function () {
+                gNames.push($(this).text());
+            });
+        }
+        function searcherInit() {
+            $("#gSearcher").autocomplete({
+                source: gNames,
+                minLength: 1,
+                select: function(event, ui) {
+                    $("#searchBox").val(ui.item.value);
+                }
+            });
+        }
+    })
+</script>
+</html>

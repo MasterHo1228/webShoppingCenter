@@ -1,0 +1,97 @@
+<!DOCTYPE html >
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>登录 -- AC商城</title>
+    <script language="JavaScript" src="js/jquery-1.12.4.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/font.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <script language="JavaScript">
+        $(function () {
+            $("#getcode_char").click(function(){
+                $(this).attr("src",'backend/code_char.php?' + Math.random());
+            });
+            $("#btnLogin").click(function () {
+                var usrName=$("#username").val();
+                var usrPW=$("#password").val();
+                var code_char = $("#code_char").val();
+
+                if (usrName=="" || usrPW==""){
+                    alert("请输入用户名或密码！");
+                }
+
+                if (code_char!=""){
+                    $.post("backend/chk_code.php?act=char",{code:code_char},function(msg){
+                        if(msg==1){
+                            if (usrName!="" && usrPW!=""){
+                                $.post("backend/logincheck.php",{username:usrName,password:usrPW},function (data) {
+                                    $("#loginEvent").html(data);
+                                });
+                            }
+                            else{
+                                alert("请输入用户名或密码！");
+                            }
+                        }
+                        else{
+                            alert("验证码错误！");
+                        }
+                    });
+                }
+                else{
+                    alert("请输入验证码！");
+                }
+            });
+        })
+    </script>
+    <style type="text/css">
+        #verifyCode{
+            margin-top: 15px;
+        }
+        #code_char{
+            width: 198px;
+            height: 35px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="login_head">
+    <div id="img_logo"><a href="index.html"><img src="images/logo.png"/></a></div>
+</div>
+
+<div id="login_middle">
+    <div class="login">
+        <div id="d1">账号登录</div>
+        <div class="login_dl">
+            <form id="formLogin" action="" method="post">
+                <input type="text" name="username" id="username" placeholder="用户名/E-Mail：" maxlength="30"/><br/>
+                <input type="password" name="password" id="password" placeholder="密码："/>
+                <div id="verifyCode">
+                    <input type="text" class="input" id="code_char" maxlength="4" placeholder="验证码："/>
+                    <img src="backend/code_char.php" id="getcode_char" title="看不清，点击换一张" align="absmiddle">
+                </div>
+            </form>
+            <button id="btnLogin">登     录</button>
+            <div class="login_register">
+                <a id="a1" href="register.html">新用户注册</a>
+                <!--<a id="a2" href="#">找回密码</a>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="foot">
+    <div class="foot_ul">
+        <ul class="ufot">
+            <li><a href="#">关于我们</a></li>
+            <li><a href="#">我要举报</a></li>
+            <li><a href="#">联系客服</a></li>
+        </ul>
+    </div>
+    <div class="foot_end">
+        <p class="foot_p">Copyright &copy; acmall.com</p>
+    </div>
+    <div id="loginEvent"></div>
+</div>
+</body>
+</html>

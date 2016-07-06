@@ -1,0 +1,95 @@
+CREATE DATABASE dbShoppingGoods CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+use dbShoppingGoods;
+
+CREATE TABLE Goods(
+  gID BIGINT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  gName VARCHAR(50) NOT NULL UNIQUE ,
+  gBrand VARCHAR(25) ,
+  gModel VARCHAR(20) ,
+  gCateID SMALLINT UNSIGNED NOT NULL ,
+  gPrice DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  gOriginPrice DECIMAL(10,2) DEFAULT 0 ,
+  gVPrice DECIMAL(10,2) DEFAULT 0 ,
+  gRankTop ENUM('0', '1') NOT NULL DEFAULT '0' ,
+  gNums INT UNSIGNED NOT NULL ,
+  gSoldOutNum BIGINT UNSIGNED NOT NULL DEFAULT 0 ,
+  gSalesSUID BIGINT UNSIGNED NOT NULL ,
+  gPhoto VARCHAR(150) DEFAULT 'images/goods/default.jpg' ,
+  gDescription TEXT NOT NULL ,
+  gPubTime TIMESTAMP NOT NULL DEFAULT current_timestamp
+);
+
+ALTER TABLE Goods ADD CONSTRAINT FKgSalesSUID FOREIGN KEY (gSalesSUID) REFERENCES dbShoppingUsers.SalesUser(sUID);
+
+CREATE TABLE goodsCategory(
+  cID SMALLINT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  cName VARCHAR(10) NOT NULL UNIQUE,
+  cDescription TEXT
+);
+
+INSERT INTO goodsCategory(cName) VALUES ('服装'),('箱包'),('鞋帽'),('手机配件'),('数码周边'),('动漫周边'),('其他');
+
+ALTER TABLE goods ADD CONSTRAINT FKgoodCateID FOREIGN KEY (gCateID) REFERENCES goodsCategory(cID);
+
+CREATE TABLE GoodsReply(
+  grID BIGINT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  gID BIGINT UNSIGNED NOT NULL ,
+  grSendUID BIGINT UNSIGNED NOT NULL ,
+  grContent TEXT NOT NULL ,
+  grType ENUM('1','2','3') DEFAULT '1',
+  grSendTime TIMESTAMP NOT NULL DEFAULT current_timestamp
+);
+
+ALTER TABLE GoodsReply ADD CONSTRAINT FKgrGID FOREIGN KEY (gID) REFERENCES Goods(gID);
+ALTER TABLE GoodsReply ADD CONSTRAINT FKgrSendUID FOREIGN KEY (grSendUID) REFERENCES dbShoppingUsers.User(uID);
+
+CREATE VIEW viewShowGoodsDetail AS
+  SELECT
+    a.gID,
+    a.gName,
+    a.gPrice,
+    a.gOriginPrice,
+    a.gVPrice,
+    a.gBrand,
+    a.gModel,
+    a.gCateID,
+    c.cName,
+    a.gRankTop,
+    a.gNums,
+    a.gSoldOutNum,
+    a.gSalesSUID,
+    b.sUName,
+    a.gPhoto,
+    a.gDescription,
+    a.gPubTime
+  FROM Goods a
+    LEFT JOIN goodsCategory c ON a.gCateID=c.cID
+    INNER JOIN dbShoppingUsers.SalesUser b
+  WHERE a.gSalesSUID=b.sUID;
+  
+CREATE VIEW viewShowGoodReplys AS
+  SELECT
+    a.grID,
+    a.gID,
+    c.gName,
+    c.gSalesSUID,
+    d.sUName,
+    a.grSendUID,
+    b.uName,
+    a.grType,
+    a.grContent,
+    a.grSendTime
+  FROM GoodsReply a
+    INNER JOIN dbShoppingUsers.User b,goods c,dbShoppingUsers.salesUser d
+  WHERE a.grSendUID=b.uID AND a.gID=c.gID AND c.gSalesSUID=d.sUID
+  GROUP BY a.grID;
+
+DELIMITER || 
+CREATE TRIGGER trgDelGoods
+  BEFORE DELETE ON goods
+  FOR EACH ROW
+  BEGIN
+    DELETE FROM goodsreply WHERE gID=old.gID;
+  END||
+  

@@ -1,0 +1,830 @@
+@charset "utf-8";
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#container {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+li {
+    list-style: none;
+}
+
+/*----------  head ----------*/
+#head {
+    height: 80px;
+    width: 100%;
+    background-color: #ddd;
+}
+
+#img_logo {
+    margin-left: 4.5%;
+    width: 230px;
+    height: 99px;
+    float: left;
+}
+
+#dLogin {
+    margin: 45px 30px 10px;
+    float: right;
+    width: 200px;
+    height: 50px;
+}
+
+.uLogin li {
+    float: left;
+    margin-left: 16px;
+}
+
+#navigation {
+    margin: 52px 4% 0 0;
+    width: 310px;
+    height: 25px;
+    float: left;
+}
+
+.unav li {
+    float: left;
+    width: 100px;
+    height: 25px;
+    text-align: center;
+}
+
+.usrLinks {
+    display: none;
+}
+
+#HeaderUsrName {
+    width: 120px;
+    min-height: 30px;
+    margin: 45px ;
+    float: right;
+    display: none;
+}
+
+/*----------  top ----------*/
+#top {
+    width: 100%;
+    height: 50px;
+}
+
+.lookup {
+    margin: 20px auto;
+    width: 600px;
+    height: 45px;
+}
+
+.txtSearch {
+    width: 500px;
+    height: 34px;
+    outline: none;
+    border: 3px solid #F90;
+    float: left;
+}
+
+.btnSearch {
+    display: block;
+    width: 90px;
+    height: 40px;
+    color: #FFF;
+    background-color: #F90;
+    border: 1px solid #F90;
+    float: left;
+    font-size: 18px;
+}
+
+.btnSearch:hover {
+    background-color: #F80;
+    cursor: pointer;
+}
+
+/*----------  middle ----------*/
+#middle {
+    margin: 10px auto 0;
+    width: 90%;
+    max-width: 1600px;
+    min-width: 833px;
+    min-height: 720px;
+    background-color: #FFF;
+}
+
+#mLeft {
+    min-height: 720px;
+    max-width: 85%;
+    min-width: 72%;
+    float: left;
+    clear: both;
+}
+
+#mRight {
+    width: 25%;
+    min-width: 288px;
+    max-width: 288px;
+    min-height: 720px;
+    background-color: #6CC;
+    float: right;
+}
+
+#dLogins {
+    margin: auto;
+    width: 98%;
+    height: 200px;
+    background-color: #3CC;
+}
+
+.Head_portrait {
+    margin: auto;
+    width: 88px;
+    height: 120px;
+}
+
+.Head_portrait img {
+    margin-top: 13px;
+    border-radius: 50px;
+}
+
+.d1 {
+    margin: 8px auto 10px -30px;
+    text-align: center;
+    font-size: 14px;
+    min-width: 150px;
+    max-width: 200px;
+}
+
+.btnlr, #divIndexUsrBtns {
+    margin: 30px auto 0;
+    width: 200px;
+    height: 30px;
+}
+
+.btnUsr {
+    display: block;
+    width: 60px;
+    height: 30px;
+    text-align: center;
+    margin: 0 20px;
+    color: #FFF;
+    background-color: #F90;
+    border: 1px solid #F90;
+    float: left;
+}
+
+.btnUsr:hover {
+    background-color: #F80;
+    cursor: pointer;
+}
+
+#indexNews {
+    width: 280px;
+    min-height: 500px;
+    margin: 10px auto;
+    border: 2px solid #09F;
+    background-color:#FFC;
+}
+
+#indexNews > p {
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    margin: 20px auto 20px;
+}
+
+#indexNews > ul {
+    border-top: 1px solid #0CF;
+    padding-top: 10px;
+}
+
+.clear{
+    clear: both;
+}
+
+/*------------ 登陆页面 ------------*/
+.login_head {
+    width: 100%;
+    height: 100px;
+    background-color: #FFF;
+}
+
+#login_middle {
+    width: 100%;
+    height: 700px;
+    background-image: url(../images/p1.jpg);
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+
+.login {
+    margin: 100px 30px 0 0;
+    width: 310px;
+    height: 355px;
+    float: right;
+    background-color: rgba(999, 999, 999, 0.6);
+    box-shadow: 0 0 8px 1px;
+}
+
+#d1 {
+    margin: 20px 0 15px 15px;
+    font-size: 18px;
+}
+
+.login_dl {
+    padding: 5px 0 0 18px;
+    width: 280px;
+    height: 200px;
+}
+
+#username, #password {
+    margin-top: 12px;
+    width: 265px;
+    height: 35px;
+}
+
+#verifyCode {
+    margin-top: 15px;
+}
+
+#form1 label {
+    margin-left: 5px;
+}
+
+.login_register {
+    margin: 15px 5px;
+    width: 265px;
+    height: 22px;
+}
+
+#a1 {
+    float: left;
+}
+
+#a2 {
+    float: right;
+}
+
+#btnLogin {
+    margin: 25px 0 15px;
+    width: 270px;
+    height: 48px;
+    color: #FFF;
+    font-size: 20px;
+    background-color: #F90;
+    border: 1px solid #F90;
+    cursor: pointer;
+}
+
+#btnLogin:hover {
+    background-color: #F80;
+}
+
+/*------------ 注册页面 ------------*/
+#reg_middle {
+    margin: 30px auto 0;
+    width: 500px;
+    height: 500px;
+}
+
+#reg_middle td {
+    height: 30px;
+}
+
+#reg_middle input {
+    height: 25px;
+}
+
+#label1 {
+    margin-top: 30px;
+    width: 500px;
+    height: 55px;
+}
+
+#label1 input {
+    width: 80px;
+    height: 35px;
+    background-color: #F90;
+    border: 1px solid #F90;
+    color: #FFF;
+    font-size: 16px;
+}
+
+#label1 input:hover {
+    background-color: #F80;
+    cursor: pointer;
+}
+
+#btnRegist {
+    margin-left: 70px;
+}
+
+#btnReset {
+    margin-left: 100px;
+}
+.p2 {
+    margin: 6px 36px 0 0;
+    color: #F00;
+    float: right;
+}
+/*------------ foot ------------*/
+.foot {
+    bottom: 0;
+    width: 100%;
+    height: 10%;
+}
+
+.foot_ul {
+    width: 335px;
+    margin: auto;
+}
+
+.ufot {
+    margin-top: 15px;
+    float: left;
+}
+
+.ufot li {
+    float: left;
+    margin: 0 15px;
+}
+
+.foot_end {
+    width: 250px;
+    clear: both;
+    margin: auto;
+
+}
+
+.foot_p {
+    margin-top: 10px;
+    float: left;
+}
+
+/*------------ 商品信息 ------------*/
+#info_middle {
+    position: relative;
+    margin: 30px auto 0;
+    width: 70%;
+    min-height: 780px;
+}
+
+#GoodsHead {
+    width: 960px;
+    height: 375px;
+    margin: auto;
+}
+
+#good_img {
+    width: 350px;
+    height: 350px;
+    float: left;
+    background-color: #0C6;
+}
+
+#info_right {
+    margin-left: 66px;
+    width: 415px;
+    height: 385px;
+    float: left;
+}
+
+#info_table {
+    height: 368px;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+#txt_number {
+    height: 25px;
+}
+
+#btnBuyGood {
+    margin-left: 13%;
+    width: 130px;
+    font-weight: bold;
+    height: 40px;
+    color: #F90;
+    font-size: 16px;
+    background-color: #FCC;
+    border: 1px solid #C90;
+}
+
+#btnBuyGood:hover {
+    background-color: #FBC;
+    cursor: pointer;
+}
+
+#btnAddToCart {
+    margin-right: 14%;
+    float: right;
+    width: 160px;
+    font-weight: bold;
+    height: 40px;
+    color: #FFF;
+    font-size: 16px;
+    background-color: #F90;
+    border: 1px solid #F90;
+}
+
+#btnAddToCart:hover {
+    background-color: #F80;
+    cursor: pointer;
+}
+
+#good_Main {
+    float: left;
+    width: 100%;
+}
+
+.ui-tabs-panel {
+    background-color: white !important;
+}
+
+#gSellNum {
+    margin-right: 15px;
+}
+
+#good_Main {
+    font-family: "Microsoft YaHei UI";
+    font-size: 14px !important;
+}
+
+#GoodReply > ul > li {
+    border-bottom: 1px solid black;
+    min-height: 80px;
+}
+
+.replyInfo {
+    float: left;
+    margin: 10px 35px 15px 5px;
+}
+
+.replyMain {
+    float: left;
+    margin: 10px 5px 15px 5px;
+}
+
+/*-------------购物车页----------------*/
+#cartMain {
+    display: none;
+    min-height: 580px;
+}
+
+#cartTitle {
+    width: 100px;
+    margin: 35px auto;
+}
+
+#cartDetail {
+    width: 860px;
+    margin: auto;
+    text-align: center;
+}
+
+#cartDetail > table {
+    margin: 15px auto;
+}
+
+#txtOrderPerson {
+    width: 120px;
+    height: 25px;
+}
+
+#txtOrderAddress {
+    width: 285px;
+    height: 25px;
+}
+
+#txtOrderTel {
+    width: 180px;
+    height: 25px;
+}
+
+#btnToPayOrder,#btnClearCart{
+    width: 160px;
+    height: 40px;
+    margin: 20px 25px;
+    color:#FFF;
+    background-color:#F90;
+    border:1px solid #F90;
+}
+#btnToPayOrder:hover,#btnClearCart:hover{
+    background-color:#F80;
+    border:1px solid #F80;
+    cursor:pointer;
+}
+
+#emptyCart {
+    width: 810px;
+    margin: 75px auto;
+    text-align: center;
+}
+#cartMain table{
+    border:1px solid #0F9;
+}
+
+/*-----------------支付页面-------------------*/
+#PayMain {
+    display: none;
+    width: 745px;
+    margin: auto;
+    text-align: center;
+}
+
+#payByAli, #payByWC {
+    width: 180px;
+    height: 28px;
+    margin: 10px auto;
+}
+
+#alipay, #wechat {
+    float: left;
+    width: 360px;
+    height: 480px;
+    margin: auto;
+}
+
+#alipay > img, #wechat > img {
+    width: 360px;
+    height: 380px;
+}
+
+/*-----------------支付页面-------------------*/
+#NewsMain {
+    width: 960px;
+    margin: auto;
+}
+
+#NewsHead {
+    border-bottom: 1px solid black;
+}
+
+#newsTitle {
+    width: 65%;
+    margin: 15px auto;
+    text-align: center;
+}
+
+#newsContent {
+    margin: 30px auto;
+}
+
+/*----------------- 订单页面 -------------------*/
+#order_d{
+    margin:25px auto;
+    padding-bottom:20px;
+    width:120px;
+}
+#detail_ord{
+    margin:35px auto 0;
+    width:90%;
+    height:600px;
+}
+#detail_top{
+    margin:auto;
+    width:90%;
+    height:155px;
+    border:1px solid #F90;
+    background-color:#FFC;
+}
+#det1{
+    margin:20px auto 0;
+    width:85%;
+    height:500px;
+}
+#detail_middle{
+    margin:30px auto 0;
+    width:90%;
+    height:400px;
+    border:1px solid #3FC;
+}
+.ord_tab{
+    margin-left:50px;
+}
+#orderTodo{
+    float: right;
+}
+#orderTodo>button{
+    width: 80px;
+    height: 25px;
+    margin: 0 10px;
+    color: white;
+    background-color:#F90;
+    border:1px solid #F90;
+}
+#orderTodo>button:hover{
+    background-color:#F80;
+    border:1px solid #F80;
+    cursor:pointer;
+}
+#orderToPay,#orderToConfirm{
+    display: none;
+}
+#orderDetail{
+    margin: 20px auto 30px 50px;
+}
+#orderDetail>table{
+    width: 80%;
+}
+#orderGoodsList{
+    text-align: center;
+}
+#orderSumPrice{
+    float: right;
+    margin: 20px 180px 10px 0;
+}
+.orderReply{
+    display: none;
+    margin-top: 10px;
+}
+.orderExpress{
+    display: none;
+}
+
+/*-------------------订单页 进度条样式------------------------*/
+
+.progress_bar .pro-bar {
+    background: hsl(0, 0%, 97%);
+    box-shadow: 0 1px 2px hsla(0, 0%, 0%, 0.1) inset;
+    height:4px;
+    margin-bottom: 12px;
+    margin-top: 45px;
+    position: relative;
+}
+.progress_bar .progress_bar_title{
+    font-size: 15px;
+    font-weight: 500;
+    position: relative;
+    top: -28px;
+    z-index: 1;
+}
+.progress_bar .progress_status{
+    float: right;
+    margin-top: -24px;
+}
+.progress_bar .progress-bar-inner {
+    background-color: hsl(0, 0%, 88%);
+    display: block;
+    width: 0;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: width 1s linear 0s;
+    animation: animate-positive 2s;
+}
+.progress_bar .progress-bar-inner:before {
+    content: "";
+    background-color: hsl(0, 0%, 100%);
+    border-radius: 50%;
+    width: 4px;
+    height: 4px;
+    position: absolute;
+    right: 1px;
+    top: 0;
+    z-index: 1;
+}
+.progress_bar .progress-bar-inner:after {
+    content: "";
+    width: 14px;
+    height: 14px;
+    background-color: inherit;
+    border-radius: 50%;
+    position: absolute;
+    right: -4px;
+    top: -5px;
+}
+@-webkit-keyframes animate-positive{
+    0% { width: 0%; }
+}
+@keyframes animate-positive{
+    0% { width: 0%; }
+}
+
+/*-----------------首页 搜索页瀑布流css样式-------------------*/
+
+#goods-wrapper {
+    position: relative;
+    max-width: 100%;
+    width: 100%;
+}
+img.thumb {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+}
+.white-panel {
+    position: absolute;
+    margin-top: 10px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+.white-panel h1 {
+    font-size: 1em;
+    color: #ffa526;
+}
+.white-panel:hover {
+    box-shadow: 1px 1px 10px rgba(0,0,0,0.5);
+    margin-top: -5px;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+
+/*----------------个人信息--------------------*/
+#UserInfo{
+    font-size: 20px;
+    font-weight: 500;
+    margin:30px auto 0;
+}
+#UserInfo li{
+    margin-bottom:40px;
+}
+
+#btnMyinfoLogout {
+    font-size: 16px;
+    width: 120px;
+    height: 30px;
+    margin-top: 35px;
+}
+
+#ordersList>table{
+    margin: auto;
+    font-size: 17px !important;
+    font-weight: 500 !important;
+    min-width: 900px;
+}
+#ordersList>table>thead>tr{
+    height: 35px;
+}
+#ordersList>table tbody{
+    min-height: 650px;
+}
+#ordersList>table>tbody>tr{
+    border: 1px solid black;
+    height: 75px;
+}
+.OrderToPay{
+    display: block;
+    width: 60px;
+    height: 30px;
+    font-size: 16px;
+    font-weight: 400;
+    text-align: center;
+    line-height: 30px;
+    margin: 10px 0 -15px 45px;
+    background-color: #F90;
+    border: 1px solid #F90;
+    color: white;
+}
+.OrderToPay:hover{
+    background-color: #F80;
+}
+
+/*---------------评论界面----------------*/
+#usrReplyMain {
+    width: 425px;
+    height: 128px;
+    margin: 25px;
+    border: 1px solid black;
+    padding:3px;
+}
+.replyGoodsInfo,.replyGoodsMain{
+    float: left;
+}
+#replyGoodsImg {
+    width: 100px;
+    height: 100px;
+}
+.rtb{
+    margin-left:20px;
+}
+#rt1,#rt2,#rt3{
+    margin:0 15px 0 10px;
+}
+#replyMain {
+    width: 300px;
+    height: 55px;
+    resize: none;
+}
+#btnSendReply {
+    margin-top:3px;
+    width: 65px;
+    height: 25px;
+    color:#FFF;
+    background-color:#F90;
+    border:1px solid #F90;
+}
+#btnSendReply:hover{
+    background-color:#F80;
+    cursor:pointer;
+}

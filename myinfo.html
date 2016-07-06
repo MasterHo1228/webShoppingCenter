@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>用户中心 -- AC商城</title>
+    <script language="JavaScript" src="js/jquery-1.12.4.min.js"></script>
+    <script src="js/modernizr.custom.js"></script>
+    <script src="js/cbpFWTabs.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/normalize.css"/>
+    <link rel="stylesheet" type="text/css" href="css/tabs.css"/>
+    <link rel="stylesheet" type="text/css" href="css/tabstyles.css"/>
+
+    <link rel="stylesheet" type="text/css" href="css/font.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <style type="text/css">
+        #middle {
+            width: 80%;
+        }
+
+        #mLeft {
+            min-width: 100%;
+            box-shadow: 0 0 5px 1px #389fff;
+        }
+    </style>
+</head>
+
+<body>
+<div id="head">
+    <div id="img_logo"><a href="index.html"><img src="images/logo.png"/></a></div>
+    <div id="navigation">
+        <ul class="unav">
+            <li><a href="index.html">首页</a></li>
+            <li><a href="cart.html">购物车</a></li>
+        </ul>
+    </div>
+    <div id="HeaderUsrName">
+        <p id="usrName">您好，</p>
+    </div>
+</div>
+
+<div id="middle">
+    <div id="mLeft">
+        <section>
+            <div class="tabs tabs-style-fillup">
+                <nav>
+                    <ul>
+                        <li><a href="#myInfo" class="icon icon-home"><span>用户信息</span></a></li>
+                        <li><a href="#orders" class="icon icon-gift"><span>我的订单</span></a></li>
+                    </ul>
+                </nav>
+                <div class="content-wrap">
+                    <section id="myInfo">
+                        <ul id="UserInfo">
+                            <li id="uAvatar">当前头像：</li>
+                            <li id="uName">昵称：</li>
+                            <li id="uEMail">E-Mail：</li>
+                            <li id="uGender">性别：</li>
+                            <li id="uDateOfBirth">生日：</li>
+                            <li id="uGrade">会员等级：</li>
+                            <li><button id="btnMyinfoLogout" onclick="location.href='backend/logout.php'">登出</button></li>
+                        </ul>
+                    </section>
+                    <section id="orders">
+                        <div id="ordersList">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>订单号</th>
+                                    <th>店铺名</th>
+                                    <th>是否已付款：</th>
+                                    <th>订单状态：</th>
+                                    <th>订单操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="UserOrders">
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div><!-- /content -->
+            </div><!-- /tabs -->
+        </section>
+    </div>
+</div>
+
+<div class="foot">
+    <div class="foot_ul">
+        <ul class="ufot">
+            <li><a href="#">关于我们</a></li>
+            <li><a href="#">我要举报</a></li>
+            <li><a href="#">联系客服</a></li>
+        </ul>
+    </div>
+    <div class="foot_end">
+        <p class="foot_p">Copyright &copy; acmall.com</p>
+    </div>
+</div>
+</body>
+<script>
+    $(function () {
+        $.ajax({
+            url: "backend/loginstatus.php", success: function (status) {
+                if (status == "login") {
+                    $("#dLogin").hide();
+                    $.ajax({url:"backend/showusrname.php",success:function (data) {
+                        $("#usrName").append(data);
+                        $("#indexLName").empty().append("您好，"+data+"！");
+                        $("#HeaderUsrName").show();
+                    }})
+                }
+                else{
+                    alert("请先登录网站账号！！");
+                    location.href="index.html";
+                }
+            }
+        });
+        [].slice.call(document.querySelectorAll('.tabs')).forEach(function (el) {
+            new CBPFWTabs(el);
+        });
+        $.ajax({
+            url: "backend/showuserinfo.php", dataType: 'xml', success: function (data) {
+                $(data).find("user").each(function () {
+                    var uName = $(this).find("Name").text();
+                    var uGender = $(this).find("Gender").text();
+                    var uDateOfBirth = $(this).find("DateOfBirth").text();
+                    var uEmail = $(this).find("Email").text();
+                    var uAvater = $(this).find("Avater").text();
+                    if (uAvater == "") {
+                        uAvater = "images/user/defaultAvatar.jpg";
+                    }
+                    var uGrade = $(this).find("Grade").text();
+
+                    var userLogo = "<img src='" + uAvater + "' width='89' height='89'>";
+                    $("#uAvatar").append(userLogo);
+                    $("#uName").append(uName);
+                    $("#uEMail").append(uEmail);
+                    $("#uGender").append(uGender);
+                    $("#uDateofbirth").append(uDateOfBirth);
+                    $("#uGrade").append(uGrade);
+                })
+            },
+            error:function () {
+                alert("用户信息加载失败！");
+            }
+        });
+        $.ajax({url:"backend/showmyorders.php",dataType:'xml',success:function (data) {
+            $(data).find("order").each(function () {
+                var orderID=$(this).find("orderID").text();
+                var StoreName=$(this).find("StoreName").text();
+                var isPaid=$(this).find("isPaid").text();
+                if (isPaid=="false"){
+                    var PaidText="未付款";
+                }
+                else if (isPaid=="true"){
+                    var PaidText="已付款";
+                }
+                var orderStatus=$(this).find("orderStatus").text();
+                var statusText;
+                switch (orderStatus){
+                    case "0":
+                        statusText="已取消";
+                        break;
+                    case "1":
+                        if (isPaid=="false"){
+                            statusText="未付款";
+                        }
+                        else{
+                            statusText="未发货";
+                        }
+                        break;
+                    case "2":
+                        statusText="已发货";
+                        break;
+                    case "3":
+                        statusText="已收货";
+                        break;
+                }
+                if (isPaid=="false"){
+                    if (orderStatus=="0"){
+                        var orderRow=
+                                "<tr>" +
+                                "<td>"+orderID+"</td>"+
+                                "<td>"+StoreName+"</td>"+
+                                "<td>"+PaidText+"</td>"+
+                                "<td>"+statusText+"</td>"+
+                                "<td>"+
+                                    "<a href='orderdetail.html?orderID="+orderID+"' target='view_window'>订单详细</a><br/>"+
+                                "</td>"+
+                                "</tr>";
+                    }
+                    else{
+                        var orderRow=
+                                "<tr>" +
+                                "<td>"+orderID+"</td>"+
+                                "<td>"+StoreName+"</td>"+
+                                "<td>"+PaidText+"</td>"+
+                                "<td>"+statusText+"</td>"+
+                                "<td>"+
+                                    "<a class='OrderToPay' href='payorder.html?orderID="+orderID+"&from=user' target='_blank'>付款</a><br/>"+
+                                    "<a href='orderdetail.html?orderID="+orderID+"' target='view_window'>订单详细</a><br/>"+
+                                "</td>"+
+                                "</tr>";
+                    }
+                }
+                else if (isPaid=="true"){
+                    if (orderStatus=="3"){
+                        var orderRow=
+                                "<tr>" +
+                                    "<td>"+orderID+"</td>"+
+                                    "<td>"+StoreName+"</td>"+
+                                    "<td>"+PaidText+"</td>"+
+                                    "<td>"+statusText+"</td>"+
+                                    "<td>"+
+                                        "<a href='orderdetail.html?orderID="+orderID+"' target='view_window'>订单详细</a><br/>"+
+                                    "</td>"+
+                                "</tr>";
+                    }
+                    else{
+                        var orderRow=
+                                "<tr>" +
+                                    "<td>"+orderID+"</td>"+
+                                    "<td>"+StoreName+"</td>"+
+                                    "<td>"+PaidText+"</td>"+
+                                    "<td>"+statusText+"</td>"+
+                                    "<td>"+
+                                        "<a href='orderdetail.html?orderID="+orderID+"' target='view_window'>订单详细</a><br/>"+
+                                    "</td>"+
+                                "</tr>";
+                    }
+                }
+                $("#UserOrders").append(orderRow);
+            })
+        }});
+    })
+</script>
+</html>

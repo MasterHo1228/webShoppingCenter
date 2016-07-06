@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>支付订单 -- AC商城</title>
+    <script language="JavaScript" src="js/jquery-1.12.4.min.js"></script>
+    <style type="text/css">body {
+        background-color: #eee;
+    }</style>
+    <link rel="stylesheet" type="text/css" href="css/font.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+</head>
+
+<body>
+<div id="container">
+    <div id="head">
+        <div id="img_logo"><a href="index.html"><img src="images/logo.png"/></a></div>
+    </div>
+
+    <div id="PayMain">
+        <p id="orderID">订单号：</p>
+        <p class="addOrderTips">您的订单已经提交成功！</p><br/>
+        <p>现在使用手机扫描任一二维码，进入相应的APP来给您的订单付款。</p>
+        <p>付款成功后点击相应二维码下方的“付款”按钮,我们的客服将会给您的订单进行审核</p>
+        <p>审核成功后将会给您发货！</p><br/>
+
+        <div id="alipay">
+            <img src="images/pay/alipay.jpg">
+            <button id="payByAli">付款</button>
+        </div>
+        <div id="wechat">
+            <img src="images/pay/wechat.png">
+            <button id="payByWC">付款</button>
+        </div>
+    </div>
+
+    <div class="foot">
+        <div class="foot_ul">
+            <ul class="ufot">
+                <li><a href="#">关于我们</a></li>
+                <li><a href="#">我要举报</a></li>
+                <li><a href="#">联系客服</a></li>
+            </ul>
+        </div>
+        <div class="foot_end">
+            <p class="foot_p">Copyright &copy; acmall.com</p>
+        </div>
+    </div>
+    <div id="divEvent"></div>
+</div>
+</body>
+<script language="JavaScript">
+    function getUrlVars() {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for (var i = 0; i < hashes.length; i++) {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
+    function getUrlVar(name) {
+        return getUrlVars()[name];
+    }
+    var orderIDVal = getUrlVar('orderID');
+    var orderID = decodeURI(orderIDVal);
+    var fromVal = getUrlVar('from');
+
+    $(function () {
+        $.ajax({
+            url: "backend/loginstatus.php", success: function (status) {
+                if (status != "login") {
+                    alert("非法操作！！！");
+                    location.href = "index.html";
+                }
+                else {
+                    if (orderID != "") {
+                        $("#orderID").append(orderID);
+                        $("#PayMain").show();
+                        if (fromVal == "user") {
+                            $(".addOrderTips").hide();
+                        }
+                    }
+                }
+            }
+        });
+        $("#payByAli").click(function () {
+            $.post("backend/payorder.php", {PayBy: 'alipay', orderID: orderID}, function (data) {
+                $("#divEvent").html(data);
+            })
+        });
+        $("#payByWC").click(function () {
+            $.post("backend/payorder.php", {PayBy: 'wechat', orderID: orderID}, function (data) {
+                $("#divEvent").html(data);
+            })
+        })
+    })
+</script>
+</html>

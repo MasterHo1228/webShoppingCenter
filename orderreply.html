@@ -1,0 +1,106 @@
+<!--Created by MasterHo on 2016/6/28 via IntelliJ IDEA.-->
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>商品评价 -- AC商城</title>
+    <script language="JavaScript" src="js/jquery-1.12.4.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/font.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <script language="JavaScript">
+        function getUrlVars(){
+            var vars = [], hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for(var i = 0; i < hashes.length; i++)
+            {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+        function getUrlVar(name){
+            return getUrlVars()[name];
+        }
+        var orderIDVal = getUrlVar('orderID');
+        var orderID = decodeURI(orderIDVal);
+        
+        $(function () {
+            var goodsID;
+            $.ajax({
+                url: "backend/loginstatus.php", success: function (status) {
+                    if (status == "login") {
+                        $.ajax({url:"backend/showreplygoods.php",data:{orderID:orderID},dataType:'xml',success:function (data) {
+                            $(data).find("good").each(function () {
+                                goodsID=$(this).find("goodsID").text();
+                                var gName=$(this).find("gName").text();
+                                var PhotoPos=$(this).find("PhotoPos").text();
+                                if (PhotoPos==""){
+                                    PhotoPos="images/goods/default.jpg";
+                                }
+
+                                $("#replyGoodsImg").attr("src",PhotoPos);
+                                $("#replyGoodsName").append(gName);
+                            })
+                        }})
+                    }
+                    else{
+                        alert("非法操作！");
+                        window.close();
+                    }
+                }
+            });
+            $("#btnSendReply").click(function () {
+                var ReplyType=$("input[name='replyType']:checked").val();
+                var ReplyMain=$("#replyMain").val();
+                if (ReplyMain!=""){
+                    $.post("backend/usrpubreply.php",{gID:goodsID,replyType:ReplyType,replyMain:ReplyMain},function (msg) {
+                        if (msg=="ok"){
+                            alert("评论发送成功！");
+                            window.close();
+                        }
+                        else {
+                            alert("评论发送失败！");
+                        }
+                    })
+                }
+                else{
+                    alert("请填写评论内容！");
+                }
+            })
+        })
+    </script>
+</head>
+<body>
+<div id="container">
+    <div id="usrReplyMain">
+        <div class="replyGoodsInfo">
+            <ul><!--动态显示-->
+                <li>
+                    <img src="" id="replyGoodsImg">
+                </li>
+                <li>
+                    <h3 id="replyGoodsName"></h3>
+                </li>
+            </ul>
+        </div>
+        <div class="replyGoodsMain">
+            <ul><!--静态-->
+                <li>
+                    <label for="rt1">好评</label><input type="radio" name="replyType" id="rt1" value="1" checked>
+                    <label for="rt2">中评</label><input type="radio" name="replyType" id="rt2" value="2">
+                    <label for="rt3">差评</label><input type="radio" name="replyType" id="rt3" value="3">
+                </li>
+                <li>
+                    <label for="replyMain">评论内容:</label><br/>
+                    <textarea id="replyMain" name="replyMain"></textarea>
+                </li>
+                <li>
+                    <button id="btnSendReply">发送</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>

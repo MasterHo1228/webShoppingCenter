@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title> -- AC商城</title>
+    <script language="JavaScript" src="js/jquery-1.12.4.min.js"></script>
+    <style type="text/css">body {
+        background-color: #eee;
+    }
+    </style>
+    <link rel="stylesheet" type="text/css" href="css/font.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+</head>
+
+<body>
+<div id="container">
+    <div id="head">
+        <div id="img_logo"><a href="index.html"><img src="images/logo.png"/></a></div>
+        <div id="navigation">
+            <ul class="unav">
+                <li class="usrLinks"><a href="#">用户中心</a></li>
+                <li class="usrLinks"><a href="cart.html">购物车</a></li>
+            </ul>
+        </div>
+        <div id="dLogin">
+            <ul class="uLogin">
+                <li><a href="login.html"><p class="font_red">亲，请登录</p></a></li>
+                <li><a href="register.html">注册</a></li>
+            </ul>
+        </div>
+        <div id="HeaderUsrName">
+            <p id="usrName">您好，</p>
+        </div>
+    </div>
+
+    <div id="middle">
+        <div id="NewsMain">
+            <div id="NewsHead">
+                <h1 id="newsTitle"></h1>
+                <h3 id="newsAuthor">作者：</h3>
+                <h4 id="newsSendTime">发布时间：</h4>
+            </div>
+            <p id="newsContent"></p>
+        </div>
+    </div>
+
+    <div class="foot">
+        <div class="foot_ul">
+            <ul class="ufot">
+                <li><a href="#">关于我们</a></li>
+                <li><a href="#">我要举报</a></li>
+                <li><a href="#">联系客服</a></li>
+            </ul>
+        </div>
+        <div class="foot_end">
+            <p class="foot_p">Copyright &copy; acmall.com</p>
+        </div>
+    </div>
+</div>
+</body>
+<script language="JavaScript">
+    function getUrlVars() {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for (var i = 0; i < hashes.length; i++) {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
+
+    function getUrlVar(name) {
+        return getUrlVars()[name];
+    }
+    var pnIDVal = getUrlVar('pnID');
+    var pnID = decodeURI(pnIDVal);
+
+    $(function () {
+        if (pnID != "") {
+            $.ajax({
+                url: "backend/newsdetail.php",data:{pnID:pnID},dataType:'xml',success:function (data) {
+                    $("#mLeft").empty();
+                    $(data).find("news").each(function () {
+                        var pnTitle = $(this).find("Title").text();
+                        var PubAuthor = $(this).find("PubAuthor").text();
+                        var Content = $(this).find("Content").html();
+                        var SendTime = $(this).find("SendTime").text();
+
+                        $("title").prepend(pnTitle);
+                        $("#newsTitle").append(pnTitle);
+                        $("#newsAuthor").append(PubAuthor);
+                        $("#newsSendTime").append(SendTime);
+                        $("#newsContent").append(Content);
+                    })
+                }
+            })
+        }
+        else {
+            alert("加载失败！");
+        }
+        $.ajax({
+            url: "backend/loginstatus.php", success: function (status) {
+                if (status == "login") {
+                    $("#dLogin").hide();
+                    $(".usrLinks").show();
+                    $.ajax({url:"backend/showusrname.php",success:function (data) {
+                        $("#usrName").append(data);
+                        $("#HeaderUsrName").show();
+                    }})
+                }
+            }
+        });
+    })
+</script>
+</html>

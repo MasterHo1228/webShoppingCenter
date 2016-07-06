@@ -1,0 +1,87 @@
+@charset "utf-8";
+/* CSS Document */
+*{
+	font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+}
+a{
+	text-decoration:none;
+	color:#000;
+	font-size:14px;
+}
+a:hover{
+	color:#F00;
+}
+
+.font_red{
+	color:#F00;
+}
+
+/*-------------登录页----------------*/
+#btnLogin{
+    font-weight: 500;
+}
+
+/*------------ 注册页面 ------------*/
+.p1{
+	padding-top:50px;
+	font-size:18px;
+}
+.STYLE1{
+	font-size:18px;
+	text-align:center;
+}
+.p2{
+	margin:5px 66px 0 0;
+	color:#F00;
+	float:right;
+	display:none;
+}
+
+/*------------ 商品信息 ------------*/
+.info_p1{
+	font-size:18px;
+	text-decoration:line-through;
+	color:#CCC;
+}
+.info_p2{
+	font-size:24px;
+	color:#F00;
+}
+#good_Price{
+	color:#F00;
+	font-size:24px;
+}
+/*-------------购物车页----------------*/
+#cartTitle{
+    font-size: 28px;
+}
+
+/*----------------- 订单页面 -------------------*/
+#order_d p{
+	font-weight:bold;
+	font-size:28px;
+}
+
+.p3{
+	margin-left:10px;
+	height:36px;
+	line-height:36px;
+	font-size:22px;
+	font-weight:bold;
+}
+.hr1{
+	width:200px;
+	height:1px;
+	border-color:#3F9;
+}
+.p4{
+	margin:0 0 5px 18px;
+	height:28px;
+	line-height:28px;
+	font-weight:bold;
+}
+.hr2{
+	width:96%;
+	margin:20px auto 10px;
+	border-color:#3FA;
+}

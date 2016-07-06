@@ -1,0 +1,80 @@
+CREATE DATABASE dbShoppingUsers CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+USE dbShoppingUsers;
+
+CREATE TABLE User(
+  uID BIGINT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  uName VARCHAR(15) NOT NULL UNIQUE ,
+  uPassWord VARCHAR(25) NOT NULL ,
+  uGender ENUM('Male','Female'),
+  uDateOfBirth DATE ,
+  uEmail VARCHAR(30),
+  uAvater VARCHAR(100),
+  uRegTime TIMESTAMP NOT NULL DEFAULT current_timestamp,
+  uGrade TINYINT UNSIGNED DEFAULT 1,
+  uStatus ENUM('0','1') DEFAULT '1'
+);
+
+CREATE TABLE SalesUser(
+  sUID BIGINT UNSIGNED PRIMARY KEY  NOT NULL  AUTO_INCREMENT,
+  sULoginName VARCHAR(25) NOT NULL UNIQUE,
+  sUName VARCHAR(30) NOT NULL UNIQUE,
+  sUPassWord VARCHAR(25) NOT NULL ,
+  sUAddress VARCHAR(60),
+  sUGrade TINYINT UNSIGNED DEFAULT 1
+);
+
+CREATE TABLE suPubNews(
+  pnID BIGINT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  pnTitle TEXT NOT NULL ,
+  pnContent TEXT NOT NULL ,
+  pnSendSUID BIGINT UNSIGNED NOT NULL,
+  pnSendTime TIMESTAMP NOT NULL DEFAULT current_timestamp
+);
+
+ALTER TABLE suPubNews ADD CONSTRAINT FKpnSendSUID FOREIGN KEY (pnSendSUID) REFERENCES SalesUser(sUID);
+
+CREATE TABLE administrators
+(
+  ID INT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  Name VARCHAR(20) NOT NULL UNIQUE ,
+  Password VARCHAR(25) NOT NULL ,
+  Gender ENUM('Male', 'Female'),
+  Email VARCHAR(35)
+);
+
+CREATE VIEW viewPubNews AS 
+  SELECT 
+    a.pnID,
+    a.pnTitle,
+    a.pnContent,
+    a.pnSendSUID,
+    b.sUName,
+    a.pnSendTime
+  FROM supubnews a,salesuser b
+  WHERE a.pnSendSUID=b.sUID;
+
+INSERT INTO administrators(Name,Password,Gender,Email) VALUES('root','test123456','Male','root@test.com');
+INSERT INTO salesuser(sUID,sULoginName,sUName,sUPassWord) VALUES (999,'MallAdminDefault','管理员测试账号','J3Ma1lRtL1g0n.+');
+
+CREATE TABLE usrLoginLog(
+  eID BIGINT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  sUID BIGINT UNSIGNED ,
+  AdminID INT UNSIGNED,
+  LoginTime TIMESTAMP NOT NULL DEFAULT current_timestamp
+);
+
+ALTER TABLE usrLoginLog ADD CONSTRAINT FKLoginSUID FOREIGN KEY (sUID) REFERENCES salesuser(sUID);
+ALTER TABLE usrLoginLog ADD CONSTRAINT FKLoginAdminID FOREIGN KEY (AdminID) REFERENCES administrators(ID);
+
+CREATE VIEW viewUsersLogs AS
+  SELECT
+    a.eID,
+    a.sUID,
+    b.sUName,
+    a.AdminID,
+    c.Name,
+    a.LoginTime
+  FROM usrLoginLog a 
+  LEFT JOIN salesuser b ON a.sUID=b.sUID
+  LEFT JOIN administrators C ON a.AdminID=c.ID;

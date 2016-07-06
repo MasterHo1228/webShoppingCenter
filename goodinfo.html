@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title> -- AC商城</title>
+    <script language="JavaScript" src="js/jquery-1.12.4.min.js"></script>
+    <script language="JavaScript" src="js/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/font.css" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.theme.min.css">
+    <script language="JavaScript">
+        function getUrlVars(){
+            var vars = [], hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for(var i = 0; i < hashes.length; i++)
+            {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+
+        function getUrlVar(name){
+            return getUrlVars()[name];
+        }
+        var gIDVal = getUrlVar('gID');
+        var gID=decodeURI(gIDVal);
+
+        $(function () {
+            if (gID!=""){
+                var gNums;
+                $.ajax({url:"backend/gooddetail.php",data:{gID:gID},dataType:'xml',success:function (data) {
+                    $("#mLeft").empty();
+                    $(data).find("good").each(function () {
+                        var gName=$(this).find("Name").text();
+                        var gPrice=$(this).find("Price").text();
+                        var gOriginPrice=$(this).find("OriginPrice").text();
+                        var gBrand=$(this).find("Brand").text();
+                        var gModel=$(this).find("Model").text();
+                        var Category=$(this).find("Category").text();
+                        gNums=$(this).find("Nums").text();
+                        var gSellNums=$(this).find("SellNums").text();
+                        var gStoreName=$(this).find("StoreName").text();
+                        var gPhoto=$(this).find("PhotoPos").text();
+                        if (gPhoto == "") {
+                            gPhoto = "images/goods/default.jpg";
+                        }
+                        var gDescription=$(this).find("Description").html();
+
+                        $("title").prepend(gName);
+                        $("#gName").append(gName);
+                        $("#good_img").attr("src",gPhoto);
+                        $("#good_Price").append(gPrice);
+                        $("#good_OPrice").append(gOriginPrice);
+                        $("#gSellNum").append(gSellNums);
+                        $("#gNums").append(gNums);
+                        if (gNums==0){
+                            $("#btnAddToCart").attr("disabled",true);
+                            $("#txt_number").attr("disabled",true);
+                            alert("该商品已售罄！");
+                        }
+                        $("#txt_number").attr("maxlength",gNums.length).attr("max",gNums);
+                        $("#descMain").append(gDescription);
+                        $("#StoreName").append(gStoreName);
+                        $("#gBrand").append(gBrand);
+                        $("#gModel").append(gModel);
+                        $("#gCate").append(Category);
+                    })
+                    },
+                    error:function () {
+                        alert("加载失败！");
+                    }
+                });
+                $.ajax({url:"backend/goodreplies.php",data:{gID:gID},dataType:'xml',success:function (data) {
+                    $(data).find("reply").each(function () {
+                        $("#emptyReply").hide();
+                        var UsrName=$(this).find("UsrName").text();
+                        var ReplyType;
+                        switch ($(this).find("ReplyType").text()){
+                            case "1":
+                                ReplyType="好评";
+                                break;
+                            case "2":
+                                ReplyType="中评";
+                                break;
+                            case "3":
+                                ReplyType="差评";
+                                break;
+                        }
+                        var Content=$(this).find("Content").text();
+                        var SendTime=$(this).find("SendTime").text();
+
+                        var replyRow=
+                                "<li>" +
+                                    "<div class='replyInfo'>"+
+                                        "<p>用户名："+UsrName+"</p>"+
+                                        "<p>"+ReplyType+"</p>"+
+                                        "<p>评价时间："+SendTime+"</p>"+
+                                    "</div>"+
+                                    "<div class='replyMain'>"+
+                                        "<p>评价内容：</p>"+
+                                        "<p>"+Content+"</p>"+
+                                    "</div>"+
+                                "</li>";
+
+                        $("#GoodReply>ul").append(replyRow);
+                    })},
+                    error:function () {
+                        alert("加载失败！");
+                    }
+                })
+            }
+            else{
+                alert("非法操作！");
+                window.close();
+            }
+            $.ajax({url:"backend/loginstatus.php",success:function (status) {
+                if (status=="login"){
+                    $("#dLogin").hide();
+                    $(".usrLinks").show();
+                    $.ajax({url:"backend/showusrname.php",success:function (data) {
+                        $("#usrName").append(data);
+                        $("#HeaderUsrName").show();
+                    }})
+                }
+            }});
+            $("#good_Main").tabs();
+            $("#btnAddToCart").click(function () {
+                var gCount=$("#txt_number").val();
+                if (gCount!="" || gCount==0){
+                    if (gCount.length>gNums.length){
+                        alert("非法数值！！");
+                    }
+                    else{
+                        if(gCount>gNums){
+                            gCount=gNums;
+                        }
+                        $.post("backend/addtocart.php",{gID:gID,gCount:gCount},function (data) {
+                            $("#divEvent").html(data);
+                        })
+                    }
+                }
+            })
+        })
+    </script>
+</head>
+
+<body>
+<div id="container">
+    <div id="head">
+        <div id="img_logo"><a href="index.html"><img src="images/logo.png"/></a></div>
+        <div id="navigation">
+            <ul class="unav">
+                <li><a href="index.html">首页</a></li>
+                <li class="usrLinks"><a href="myinfo.html">用户中心</a></li>
+                <li class="usrLinks"><a href="cart.html">购物车</a></li>
+            </ul>
+        </div>
+        <div id="dLogin">
+            <ul class="uLogin">
+                <li><a href="login.html"><p class="font_red">亲，请登录</p></a></li>
+                <li><a href="register.html">免费注册</a></li>
+            </ul>
+        </div>
+        <div id="HeaderUsrName">
+            <p id="usrName">您好，</p>
+        </div>
+    </div>
+
+    <div id="info_middle">
+        <div id="GoodsHead">
+            <img id="good_img" src="">
+            <div id="info_right">
+                <table width="100%" border="0" id="info_table">
+                    <tr>
+                        <td colspan="2" id="gName">商品名称：</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">价格：￥<span id="good_Price"></span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">原价：￥<span id="good_OPrice"></span></td>
+                    </tr>
+                    <tr>
+                        <td id="gSellNum" width="25%">销量：</td>
+                        <td id="gNums">剩余数量：</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">选择购买数量：<input id="txt_number" type="number" min="1" max="" value="1" onkeyup="value=value.replace(/[^\d]/g,'') "/></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button id="btnAddToCart">添加到购物车</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div id="good_Main">
+            <ul>
+                <li><a href="#GoodDesc"><span>商品介绍</span></a></li>
+                <li><a href="#GoodInfo"><span>商品信息</span></a></li>
+                <li><a href="#GoodReply"><span>买家评价</span></a></li>
+            </ul>
+            <div id="GoodDesc">
+                <p id="descMain"></p>
+            </div>
+            <div id="GoodInfo">
+                <ul>
+                    <li id="StoreName">店铺名称：</li>
+                    <li id="gBrand">商品品牌：</li>
+                    <li id="gModel">商品型号：</li>
+                    <li id="gCate">商品类型：</li>
+                </ul>
+            </div>
+            <div id="GoodReply">
+                <ul>
+                    <li id="emptyReply">暂无评价！</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="foot">
+        <div class="foot_ul">
+            <ul class="ufot">
+                <li><a href="#">关于我们</a></li>
+                <li><a href="#">我要举报</a></li>
+                <li><a href="#">联系客服</a></li>
+            </ul>
+        </div>
+        <div class="foot_end">
+            <p class="foot_p">Copyright &copy; acmall.com</p>
+        </div>
+    </div>
+    <div id="divEvent"></div>
+</div>
+</body>
+</html>

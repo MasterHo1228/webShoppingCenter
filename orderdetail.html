@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>订单详情 -- AC商城</title>
+    <script language="JavaScript" src="js/jquery-1.12.4.min.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/font.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <script language="JavaScript">
+        function confirmOrder() {
+            if (confirm("亲，确定您收到您购买的商品吗？")){
+                var CorderID=orderID;
+                $.post("backend/confirmorder.php",{orderID:CorderID},function (msg) {
+                    if (msg=="ok"){
+                        alert("操作成功！");
+                    }
+                    else{
+                        alert("操作失败！");
+                    }
+                })
+            }
+        }
+        function PayOrder() {
+            var PorderID=orderID;
+            location.href="payorder.html?orderID="+PorderID;
+        }
+        function getUrlVars(){
+            var vars = [], hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for(var i = 0; i < hashes.length; i++)
+            {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+        function getUrlVar(name){
+            return getUrlVars()[name];
+        }
+        var orderIDVal = getUrlVar('orderID');
+        var orderID = decodeURI(orderIDVal);
+
+        $(function () {
+            $.ajax({url:"backend/loginstatus.php",success:function (status) {
+                if (status!="login"){
+                    alert("非法操作！！！");
+                    location.href="index.html";
+                }
+                else if (status=="login"){
+                    $.ajax({url:"backend/showuserorder.php",data:{orderID:orderID},dataType:'xml',success:function (data) {
+                        $(data).find("order").each(function () {
+                            var scoreName=$(this).find("scoreName").text();
+                            var isPaid=$(this).find("isPaid").text();
+                            if (isPaid=="false"){
+                                var PaidText="未付款";
+                                $("#orderToPay").show().attr("onclick","PayOrder()");
+                            }
+                            else if (isPaid=="true"){
+                                var PaidText="已付款";
+                            }
+                            var PayBy=$(this).find("PayBy").text();
+                            if (PayBy=="alipay" || PayBy=="ALIPAY"){
+                                var PayByText="支付宝";
+                            }
+                            else if (PayBy=="wechat" || PayBy=="WECHAT"){
+                                var PayByText="微信";
+                            }
+                            var orderStatus=$(this).find("orderStatus").text();
+                            var statusText;
+                            switch (orderStatus){
+                                case "0":
+                                    statusText="已取消";
+                                    $(".progress-bar-inner").css("background-color","#049dff").css("width","0%").attr("data-value","0").attr("data-percentage-value","0");
+                                    $("#orderToPay").hide();
+                                    break;
+                                case "1":
+                                        if (isPaid=="false"){
+                                            statusText="未付款";
+                                            $(".progress-bar-inner").css("background-color","#fdba04").css("width","20%").attr("data-value","20").attr("data-percentage-value","20");
+                                        }
+                                        else{
+                                            statusText="未发货";
+                                            $(".progress-bar-inner").css("background-color","#fdba04").css("width","33%").attr("data-value","33").attr("data-percentage-value","33");
+                                        }
+                                    break;
+                                case "2":
+                                    $(".orderExpress").show();
+                                    $("#orderToConfirm").show();
+                                    $(".progress-bar-inner").css("background-color","#049dff").css("width","66%").attr("data-value","66").attr("data-percentage-value","66");
+                                    statusText="已发货";
+                                    break;
+                                case "3":
+                                    $(".orderExpress").show();
+                                    $(".orderReply").show();
+                                    $(".progress-bar-inner").css("background-color","#1abc9c").css("width","100%").attr("data-value","100").attr("data-percentage-value","100");
+                                    $("#orderReplyLink").attr("href","orderreply.html?orderID="+orderID);
+                                    statusText="已收货";
+                                    break;
+                            }
+                            var orderPerson=$(this).find("orderPerson").text();
+                            var orderAddress=$(this).find("orderAddress").text();
+                            var orderTel=$(this).find("orderTel").text();
+                            var ExpressName=$(this).find("ExpressName").text();
+                            var ExpressNum=$(this).find("ExpressNum").text();
+                            var OrderSumPrice=$(this).find("OrderSumPrice").text();
+
+                            $("#usrOrderID").empty().append(orderID);
+                            $("#usrOrderStoreName").empty().append(scoreName);
+                            $("#usrOrderPaid").empty().append(PaidText);
+                            $("#usrOrderPayBy").empty().append(PayByText);
+                            $(".progress_status").append(statusText);
+                            $("#usrOrderPerson").empty().append(orderPerson);
+                            $("#usrOrderAddr").empty().append(orderAddress);
+                            $("#usrOrderTel").empty().append(orderTel);
+                            $("#usrOrderEName").append(ExpressName);
+                            $("#usrOrderENum").append(ExpressNum);
+                            $("#orderSumPrice").append(OrderSumPrice);
+                        });
+                        $(data).find("goods").each(function () {
+                            var goodsID=$(this).find("GoodsID").text();
+                            var gName=$(this).find("gName").text();
+                            var gPrice=$(this).find("gPrice").text();
+                            var GoodsCount=$(this).find("GoodsCount").text();
+                            var sumPrice=$(this).find("sumPrice").text();
+
+                            var orderGoodsRow=
+                                    "<tr>" +
+                                        "<td>"+goodsID+"</td>"+
+                                        "<td>"+"<a href='goodinfo.html?gID="+goodsID+"' target='_blank'>"+gName+"</a></td>"+
+                                        "<td>"+gPrice+"</td>"+
+                                        "<td>"+GoodsCount+"</td>"+
+                                        "<td>"+sumPrice+"</td>"+
+                                    "</tr>";
+                            $("#orderGoodsList").append(orderGoodsRow);
+                        })
+                    }})
+                }
+            }});
+            $.ajax({url:"backend/showusrname.php",success:function (data) {
+                $("#usrName").append(data);
+                $("#HeaderUsrName").show();
+            }});
+            $("#orderToConfirm").one("click",function () {
+                confirmOrder();
+            })
+        })
+    </script>
+</head>
+
+<body>
+<div id="head">
+    <div id="img_logo"><a href="index.html"><img src="images/logo.png"/></a></div>
+    <div id="navigation">
+        <ul class="unav">
+            <li class="usrLinks"><a href="myinfo.html">用户中心</a></li>
+            <li class="usrLinks"><a href="cart.html">购物车</a></li>
+        </ul>
+    </div>
+    <div id="HeaderUsrName">
+        <p id="usrName">您好，</p>
+    </div>
+</div>
+
+<div id="detail_ord">
+    <div id="detail_top">
+        <div id="det1">
+            <div class="progress_bar">
+                <div class="pro-bar">
+                    <small class="progress_bar_title">当前订单状态：<span class="progress_status"></span></small>
+                    <span class="progress-bar-inner" style="background-color: #1abc9c; width: 0%;" data-value="0" data-percentage-value="0"></span>
+                </div>
+            </div>
+            <div id="orderTodo">
+                <button id="orderToPay">付款</button>
+                <button id="orderToConfirm">确认收货</button>
+            </div><br/>
+            <p class="orderExpress"><span id="usrOrderEName">快递公司：</span>&nbsp;<span id="usrOrderENum">运单号：</span></p>
+            <p class="orderReply">交易成功，请给予<a href="#" target="_blank" id="orderReplyLink">评价</a>！</p>
+        </div>
+    </div>
+    <div id="detail_middle">
+        <div class="p3">订单信息</div>
+        <hr class="hr1"/>
+        <div class="p4">收货信息</div>
+        <table width="80%" border="1" cellspacing="0" cellpadding="0" class="ord_tab" height="80">
+            <tr>
+                <td>收货人：</td>
+                <td width="35%" id="usrOrderPerson"></td>
+                <td>联系电话：</td>
+                <td width="35%" id="usrOrderTel"></td>
+            </tr>
+            <tr>
+                <td>收货地址：</td>
+                <td colspan="3" id="usrOrderAddr"></td>
+            </tr>
+        </table>
+        <hr class="hr2"/>
+        <div class="p4">订单信息</div>
+        <table width="80%" border="1" cellspacing="0" cellpadding="0" class="ord_tab" height="40">
+            <tr>
+                <td>订单号：</td>
+                <td colspan="2" width="22%" id="usrOrderID">&nbsp;</td>
+                <td>是否已付款：</td>
+                <td colspan="2" width="8%" id="usrOrderPaid">&nbsp;</td>
+                <td>付款方式：</td>
+                <td colspan="2" width="7%" id="usrOrderPayBy">&nbsp;</td>
+                <td>店铺名：</td>
+                <td colspan="2" width="20%" id="usrOrderStoreName">&nbsp;</td>
+            </tr>
+        </table>
+        <div id="orderDetail">
+            <table border="1" cellspacing="0" cellpadding="0">
+                <thead>
+                    <tr>
+                        <th>商品ID</th>
+                        <th>商品名</th>
+                        <th>单价</th>
+                        <th>数量</th>
+                        <th>商品总价</th>
+                    </tr>
+                </thead>
+                <tbody id="orderGoodsList">
+
+                </tbody>
+            </table>
+            <p id="orderSumPrice">总价：￥</p>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

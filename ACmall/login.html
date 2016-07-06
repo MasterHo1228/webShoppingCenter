@@ -1,0 +1,114 @@
+<!--Created by MasterHo on 2016/6/7 via IntelliJ IDEA.-->
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>商城后台登录</title>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.theme.min.css">
+    <script language="JavaScript" src="js/jquery-1.12.4.min.js"></script>
+    <script language="JavaScript" src="js/jquery-ui.min.js"></script>
+    <style type="text/css">
+        *{
+            margin: 0;
+            padding: 0;
+            font-family: "Microsoft YaHei UI";
+        }
+        #divLoginContainer{
+            width: 380px;
+            height: 400px;
+            margin: 8% auto;
+            text-align: center;
+        }
+        .LoginInput{
+            height: 28px;
+            width: 180px;
+            margin: 6px 0;
+        }
+        #code_char{
+            width: 40px;
+            height: 25px;
+            margin-right: 25px;
+        }
+        #dialog{
+            font-size: 14px !important;
+            font-weight: 300;
+        }
+    </style>
+</head>
+<body>
+<div id="divLoginContainer">
+    <h2>商城后台登录</h2>
+    <div id="divLogin">
+        <form id="formBackLogin">
+            <input type="text" name="usrName" id="txtUsrName" class="LoginInput" placeholder="用户名："><br/>
+            <input type="password" name="usrPW" id="txtUsrPW" class="LoginInput" placeholder="密码："><br/>
+            <label for="code_char">验证码：</label><input type="text" class="input" id="code_char" maxlength="4" /><img src="backend/code_char.php" id="getcode_char" title="看不清，点击换一张" align="absmiddle">
+        </form>
+        <button id="btnLogin" class="LoginInput">登录</button>
+        <div id="loginEvent"></div>
+    </div>
+</div>
+<div id="dialog" title="Dialog">
+    <p></p>
+</div>
+
+</body>
+<script language="JavaScript">
+    $(function () {
+        $("#getcode_char").click(function(){
+            $(this).attr("src",'backend/code_char.php?' + Math.random());
+        });
+        $("#btnLogin").click(function () {
+            var usrName=$("#txtUsrName").val();
+            var usrPW=$("#txtUsrPW").val();
+            var code_char = $("#code_char").val();
+
+            if (usrName=="" || usrPW==""){
+                $("#dialog>p").empty().append("请输入用户名或密码！");
+                $("#dialog").dialog("open");
+            }
+
+            if (code_char!=""){
+                $.post("backend/chk_code.php?act=char",{code:code_char},function(msg){
+                if(msg==1){
+                    if (usrName!="" && usrPW!=""){
+                        $.post("backend/logincheck.php",{usrName:usrName,usrPW:usrPW},function (data) {
+                            $("#loginEvent").html(data);
+                            $("#txtUsrName").val("");
+                            $("#txtUsrPW").val("");
+                            $("#code_char").val("");
+                        });
+                    }
+                    else{
+                        $("#dialog>p").empty().append("请输入用户名或密码！");
+                        $("#dialog").dialog("open");
+                    }
+                }
+                else{
+                    $("#dialog>p").empty().append("验证码错误！");
+                    $("#dialog").dialog("open");
+                    }
+                });
+            }
+            else{
+                $("#dialog>p").empty().append("请输入验证码！");
+                $("#dialog").dialog("open");
+            }
+        });
+        $("#dialog").dialog({
+            autoOpen: false,
+            width: 400,
+            dialogClass: "no-close",
+            buttons: [
+                {
+                    text: "OK",
+                    click: function() {
+                        $( this ).dialog( "close" );
+                    }
+                }
+            ]
+        });
+    })
+</script>
+</html>
